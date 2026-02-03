@@ -32,6 +32,7 @@ public class IfElse {
         }else{
             IO.println("vc esta aprovado 8" + media);
         }
+
     }
 
     }
