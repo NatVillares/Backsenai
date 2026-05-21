@@ -1,54 +1,104 @@
 import javax.swing.*;
+import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 void main() {
+    JFrame tela = new JFrame("Tela de Cadastro");
+    tela.setSize(900, 500);
+    tela.setLayout(null);
+    tela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    JFrame janela = new JFrame("Cadastro de produto"); // criando o bloco principal
-    janela.setSize(600, 400);
-    janela.setLayout(null);
+    JLabel labelNome = new JLabel("Nome");
+    labelNome.setBounds(20, 20, 250, 25);
+    tela.add(labelNome);
 
-    JLabel labelProduto = new JLabel("Produto"); // nome de uma das caixas
-    labelProduto.setBounds(20, 50, 150, 40);
-    janela.add(labelProduto);
+    JTextField nome = new JTextField();
+    nome.setBounds(20, 45, 250, 30);
+    tela.add(nome);
 
-    JTextField nomeProduto = new JTextField(); // caixa que vai pedir o produto que usamos de exemplo
-    nomeProduto.setBounds(20, 80, 150, 40);
-    janela.add(nomeProduto);
+    JLabel labelIdade = new JLabel("Idade");
+    labelIdade.setBounds(20, 80, 150, 25);
+    tela.add(labelIdade);
 
-    JLabel precoLabel = new JLabel("Preco");  //
-    precoLabel.setBounds(20, 110, 150, 40); // definição dos tamanhos da caixa
-    janela.add(precoLabel);
+    JTextField Idade = new JTextField();
+    Idade.setBounds(20, 105, 150, 30);
+    tela.add(Idade);
 
-    JTextField preco = new JTextField(); // campo pedido
-    preco.setBounds(20, 150, 150, 40);
-    janela.add(preco);
+    JLabel labelRaca = new JLabel("Raça");
+    labelRaca.setBounds(20, 140, 150, 25);
+    tela.add(labelRaca);
 
-    JLabel quantidadeLabel = new JLabel("Quantidade"); // campo pedido
-    quantidadeLabel.setBounds(20, 190, 150, 40);
-    janela.add(quantidadeLabel);
+    JTextField Raca = new JTextField();
+    Raca.setBounds(20, 165, 250, 30);
+    tela.add(Raca);
 
-    JTextField quantidade = new JTextField();
-    quantidade.setBounds(20, 220, 150, 40);
-    janela.add(quantidade);
+    JLabel labelEspecie = new JLabel("Espécie");
+    labelEspecie.setBounds(20, 200, 150, 25);
+    tela.add(labelEspecie);
 
-    JButton cadastrar = new JButton("Cadastrar"); // cria o butão que usaremos, neste caso com escrita cadastro
-    cadastrar.setBounds(20, 270, 150, 40);
-    janela.add(cadastrar);
-    cadastrar.addActionListener(e -> {
-        String nome = nomeProduto.getText();
-        String preco1 = preco.getText();
-        String quantidade1 = quantidade.getText();
-        JOptionPane.showMessageDialog(null, "Produto cadastrado com sucesso " + nome +" Preco " +preco1 + " quantidade "+ quantidade1);
+    String[] especies = {"Cachorro", "Gato", "Pássaro", "Outro"};
+    JComboBox<String> campoEspecie = new JComboBox<>(especies);
+    campoEspecie.setBounds(20, 225, 250, 30);
+    tela.add(campoEspecie);
+
+    JLabel labelEndereco = new JLabel("Endereço");
+    labelEndereco.setBounds(20, 260, 280, 25);
+    tela.add(labelEndereco);
+
+    JTextField Endereco = new JTextField();
+    Endereco.setBounds(20, 285, 260, 30);
+    tela.add(Endereco);
+
+    JLabel labelTelefone = new JLabel("Telefone");
+    labelTelefone.setBounds(20, 320, 280, 25);
+    tela.add(labelTelefone);
+
+    JTextField Telefone = new JTextField();
+    Telefone.setBounds(20, 345, 260, 30);
+    tela.add(Telefone);
+
+    JButton enviar = new JButton("Enviar");
+    enviar.setBounds(20, 400, 140, 40);
+    tela.add(enviar);
+
+    enviar.addActionListener(e -> {
+        String sql = "INSERT INTO Tipo(nome, especie, idade, raca, endereco, telefone) VALUES(?,?,?,?,?,?)";
+
+        try {
+            Connection conexao = Conexao.conectar();
+
+            PreparedStatement ps = conexao.prepareStatement(sql);
+
+            ps.setString(1, nome.getText());
+            ps.setString(2, (String) campoEspecie.getSelectedItem());
+            ps.setString(3, Idade.getText());
+            ps.setString(4, Raca.getText());
+            ps.setString(5, Endereco.getText());
+            ps.setString(6, Telefone.getText());
+
+            ps.executeUpdate();
+
+            JOptionPane.showMessageDialog(tela, "Animal cadastrado com sucesso!");
+
+            nome.setText("");
+            Idade.setText("");
+            Raca.setText("");
+            Endereco.setText("");
+            Telefone.setText("");
+            campoEspecie.setSelectedIndex(0);
+
+            ps.close();
+            conexao.close();
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(tela, "Erro ao salvar: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
     });
 
-    JButton limpar = new JButton("limpar"); // limpa as informacoes que escrevemos
-    limpar.setBounds(180, 270, 150, 40);
-    janela.add(limpar);
-    limpar.addActionListener(e -> {
-        nomeProduto.setText("");
-        preco.setText("");
-        quantidade.setText("");
-
-    });
-
-    janela.setVisible(true);
+    tela.setLocationRelativeTo(null);
+    tela.setVisible(true);
 }
